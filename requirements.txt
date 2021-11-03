@@ -1,0 +1,14 @@
+cupy-cuda114
+fastapi
+h5py
+imageio
+imageio-ffmpeg
+ipywidgets
+jupyter
+moviepy
+numpy
+opencv-python-headless
+requests
+scipy
+tqdm
+uvicorn
