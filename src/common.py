@@ -201,7 +201,7 @@ def process_kenburns(objSettings):
 ##########################################################
 
 def preprocess_kernel(strKernel, objVariables):
-	with open('../common.cuda', 'r') as objFile:
+	with open('./src/common.cuda', 'r') as objFile:
 		strKernel = objFile.read() + strKernel
 	# end
 
