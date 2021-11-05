@@ -1,5 +1,5 @@
 project: living-bio
-application: 3d-ken-burns
+application: ken-burns-3d
 port: 80
 
 resources:
