@@ -1,0 +1,30 @@
+
+
+# ---- Jupyter
+jupyter
+ipywidgets
+
+# ---- Image
+opencv-python-headless
+scipy
+
+# ---- Calculation
+cupy-cuda114
+numpy
+
+# ----  Video
+moviepy
+imageio
+imageio-ffmpeg
+
+# ----  HTTP
+requests
+
+# ---- Deployment
+fastapi
+uvicorn
+
+# ----  Utility
+tqdm
+h5py
+pip-tools
