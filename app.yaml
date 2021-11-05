@@ -1,5 +1,5 @@
 project: living-bio
-application: ken-burns
+application: kenburns
 port: 80
 
 resources:
