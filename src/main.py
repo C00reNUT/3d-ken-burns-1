@@ -38,7 +38,6 @@ torch.backends.cudnn.enabled = True # make sure to use cudnn for computational p
 objCommon = {}
 
 exec(open('./common.py', 'r').read())
-
 exec(open('./models/disparity-estimation.py', 'r').read())
 exec(open('./models/disparity-adjustment.py', 'r').read())
 exec(open('./models/disparity-refinement.py', 'r').read())
