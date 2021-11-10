@@ -6,6 +6,17 @@ compile:
 build:
 - g8 stage builder # --cache
 
+after_success:
+# FIXME: not work
+# - bash -c "bash <(curl -s https://codecov.io/bash) -C $COMMIT -T $TAG -b $BUILD -B $BRANCH"
+{% if config.STAGE == 'production' %}
+- docker tag {{config.IMAGE}}:{{TAG}} {{config.IMAGE}}:latest
+- docker push {{config.IMAGE}}
+{%- endif %}
+- g8 stage notify "#devops" "Build {{APP}} {{COMMIT_SHORT}}@{{NAME}} success, check https://console.cloud.google.com/cloud-build/builds/{{BUILD}}"
+- docker images
+- g8 stage check --description="image size is `docker images --format '{% raw %}{{.Repository}} {{.Size}}{% endraw %}' | grep {{APP}} | awk 'END {print $2}'`" --context="G8S-IMAGE" success
+
 deploy:
 - docker push {{IMAGE}}:{{TAG}}
 - bash ./scripts/deploy.sh
