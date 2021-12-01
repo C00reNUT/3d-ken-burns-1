@@ -9,7 +9,7 @@ opencv-python-headless
 scipy
 
 # ---- Calculation
-cupy-cuda114
+cupy-cuda111
 numpy
 
 # ----  Video
@@ -28,3 +28,6 @@ uvicorn
 tqdm
 h5py
 pip-tools
+
+# ---- Storage
+cloudinary

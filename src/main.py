@@ -18,12 +18,15 @@ import re
 import scipy
 import scipy.io
 import sys
+import shutil
 import time
 import tempfile
 import zipfile
 import requests
+import pydantic
 
 from fastapi import FastAPI, FileResponse
+from cloudinary.uploader import upload as cloudinary_upload
 
 ##########################################################
 
@@ -47,14 +50,22 @@ exec(open('./models/pointcloud-inpainting.py', 'r').read())
 
 app = FastAPI()
 
-app.post("/input")
-def autozoom(url: str):
-	path = os.join(os.curdir, "movies")
-	fileList = [i for i in os.listdir(path)]
-	if len(fileList) > 0:
-		for f in fileList:
-			os.remove(os.join(path, f))
-	
+class KBERequest(pydantic.BaseModel):
+    image_url: str
+    
+
+app.post("/kbe")
+async def autozoom(url: KBERequest):
+
+	# Check the content type of the URL before downloading the content
+    try:
+        h = requests.head(url.image_url, allow_redirects=True)
+    except Exception:
+        raise HTTPException(400, detail="Invalid URL for image")
+    if "image/jpeg" not in h.headers["Content-Type"] or "image/png" not in h.headers["Content-Type"]:
+        raise HTTPException(400, detail="Invalid image file type: expected jpg/jpeg or png")
+
+	# download image and generate input
     img_data = requests.get(url, stream=True).raw
     npyImage = numpy.asarray(bytearray(img_data.read(), dtype='uint8'))
     npyImage = numpy.ascontiguousarray(cv2.imdecode(npyImage, cv2.IMREAD_COLOR))
@@ -68,6 +79,7 @@ def autozoom(url: str):
 
 	npyImage = cv2.resize(src=npyImage, dsize=(intWidth, intHeight), fx=0.0, fy=0.0, interpolation=cv2.INTER_AREA)
 
+	# preprocess
 	process_load(npyImage, {})
 
 	objFrom = {
@@ -83,6 +95,7 @@ def autozoom(url: str):
 		'objFrom': objFrom
 	})
 
+	# model infernece
 	npyResult = process_kenburns({
 		'fltSteps': numpy.linspace(0.0, 1.0, 75).tolist(),
 		'objFrom': objFrom,
@@ -90,7 +103,18 @@ def autozoom(url: str):
 		'boolInpaint': True
 	})
 
+	# save output result
+	if os.path.isdir(path):
+		shutil.rmtree(path)
+	os.makedirs(path)
+
 	outputPath = os.join(path, "kenburns.mp4")
 	moviepy.editor.ImageSequenceClip(sequence=[ npyFrame[:, :, ::-1] for npyFrame in npyResult + list(reversed(npyResult))[1:] ], fps=25).write_videofile(outputPath)
 
-	return FileResponse(outputPath, media_type='text/mp4', filename='kenburns.mp4')
+	# upload movie
+	upload_resp = cloudinary_upload(
+        outputPath,
+        folder="kenburns-outputs",
+        resource_type="video",
+    )
+	return {"output_url": upload_resp["url"]}
