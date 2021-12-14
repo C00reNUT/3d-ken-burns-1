@@ -62,18 +62,18 @@ cloudinary.config(
 async def autozoom(url: pydantic.HttpUrl):
 
 	# Check the content type of the URL before downloading the content
-    try:
-        h = requests.head(url.image_url, allow_redirects=True)
-    except Exception:
-        raise HTTPException(400, detail="Invalid URL for image")
-    if "image/jpeg" not in h.headers["Content-Type"] or "image/png" not in h.headers["Content-Type"]:
-        raise HTTPException(400, detail="Invalid image file type: expected jpg/jpeg or png")
+	try:
+		h = requests.head(url.image_url, allow_redirects=True)
+	except Exception:
+		raise HTTPException(400, detail="Invalid URL for image")
+	if "image/jpeg" not in h.headers["Content-Type"] or "image/png" not in h.headers["Content-Type"]:
+		raise HTTPException(400, detail="Invalid image file type: expected jpg/jpeg or png")
 
 	# download image and generate input
-    img_data = requests.get(url, stream=True).raw
-    npyImage = numpy.asarray(bytearray(img_data.read(), dtype='uint8'))
-    npyImage = numpy.ascontiguousarray(cv2.imdecode(npyImage, cv2.IMREAD_COLOR))
-    intWidth = npyImage.shape[1]
+	img_data = requests.get(url, stream=True).raw
+	npyImage = numpy.asarray(bytearray(img_data.read(), dtype='uint8'))
+	npyImage = numpy.ascontiguousarray(cv2.imdecode(npyImage, cv2.IMREAD_COLOR))
+	intWidth = npyImage.shape[1]
 	intHeight = npyImage.shape[0]
 
 	fltRatio = float(intWidth) / float(intHeight)
@@ -108,8 +108,8 @@ async def autozoom(url: pydantic.HttpUrl):
 	})
 
 	# save output result
-	if os.path.isdir(path):
-		shutil.rmtree(path)
+    if os.path.isdir(path):
+        shutil.rmtree(path)
 	os.makedirs(path)
 
 	outputPath = os.join(path, "kenburns.mp4")
@@ -117,8 +117,8 @@ async def autozoom(url: pydantic.HttpUrl):
 
 	# upload movie
 	upload_resp = cloudinary_upload(
-        outputPath,
-        folder="kenburns-outputs",
-        resource_type="video",
-    )
+		outputPath,
+		folder="kenburns-outputs",
+		resource_type="video",
+	)
 	return {"output_url": upload_resp["url"]}
