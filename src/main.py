@@ -25,6 +25,7 @@ import zipfile
 import requests
 import pydantic
 
+from app.settings import config
 from fastapi import FastAPI, FileResponse
 from cloudinary.uploader import upload as cloudinary_upload
 
@@ -50,12 +51,15 @@ exec(open('./models/pointcloud-inpainting.py', 'r').read())
 
 app = FastAPI()
 
-class KBERequest(pydantic.BaseModel):
-    image_url: str
-    
+cloudinary.config(
+	cloud_name=config.CLOUDINARY_CLOUD_NAME,
+	api_key=config.CLOUDINARY_API_KEY,
+	api_secret=config.CLOUDINARY_API_SECRET,
+	secure=True,
+)
 
-app.post("/kbe")
-async def autozoom(url: KBERequest):
+@app.post("/kbe")
+async def autozoom(url: pydantic.HttpUrl):
 
 	# Check the content type of the URL before downloading the content
     try:
