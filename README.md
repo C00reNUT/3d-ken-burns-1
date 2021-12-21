@@ -40,7 +40,7 @@ Worse   |1. 有柱狀物體ex.樹、路燈、椅子<br>2. 前後景交疊在一�
 |  4   |  825s                |  15.8s                 |  4734MB               |
 
 ### 安裝(使用Docker)
-1. 必須使用GPU，因此請確認host的cuda driver是否支援CUDA 11.1。如果沒有支援，可以使用較低版本的CUDA Image，並修改[Image]安裝的torch版本和cupy版本(需和cuda版本一致)
+1. 必須使用GPU，因此請確認host的cuda driver是否支援CUDA 11.1。如果沒有支援，可以使用較低版本的CUDA Image，並修改[Image](https://github.com/livingbio/3d-ken-burns/blob/252d4e5b230140d381298115385382f71b94cba2/Dockerfile#L1)安裝的[torch版本](https://github.com/livingbio/3d-ken-burns/blob/252d4e5b230140d381298115385382f71b94cba2/scripts/install.sh#L13)和[cupy版本](https://github.com/livingbio/3d-ken-burns/blob/252d4e5b230140d381298115385382f71b94cba2/requirement.in#L12)([需和cuda版本一致](https://cupy.dev))
 2. ```docker build -t 3dkbe .```
 3. ```docker run -it --gpus all 3dkbe /bin/bash```
 
