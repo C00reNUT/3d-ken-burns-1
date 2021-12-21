@@ -38,3 +38,12 @@ Worse   |1. 有柱狀物體ex.樹、路燈、椅子<br>2. 前後景交疊在一�
 |  2   |  768s                |  14.7s                 |  4759MB               |
 |  3   |  837s                |  16.0s                 |  4184MB               |
 |  4   |  825s                |  15.8s                 |  4734MB               |
+
+### 安裝(使用Docker)
+1. 必須使用GPU，因此請確認host的cuda driver是否支援CUDA 11.1。如果沒有支援，可以使用較低版本的CUDA Image，並修改[Image]安裝的torch版本和cupy版本(需和cuda版本一致)
+2. ```docker build -t 3dkbe .```
+3. ```docker run -it --gpus all 3dkbe /bin/bash```
+
+## Demo
+1. pass the input image to /images
+2. run ```python autozoom.py --in ./images/yourImageName.jpg --out ./autozoom.mp4```
